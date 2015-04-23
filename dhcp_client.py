@@ -171,7 +171,7 @@ if __name__ == '__main__':
             data = dhcps.recv(65535)
             test.data_init(data)
             test.unpack()   
-            if test.TransactionID == data[4:8] and test.print_result() == 2 and test.next_server == 0:
+            if test.TransactionID == data[4:8] and test.print_result() == 2 :
                 break
     except socket.timeout as e:
         print(e)
