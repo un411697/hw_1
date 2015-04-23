@@ -97,7 +97,7 @@ class server :
         packet += b'\x00'*64 #sname
         packet += b'\x00'*128 #file
         packet += b'\x63\x82\x53\x63' #magic cookie
-        packet += b'\x35\x01\x05' #option = 53 len = 1 message type = 2 
+        packet += b'\x35\x01\x05' #option = 53 len = 1 message type = 5
         packet += b'\x36\x04' + self.dhcp_server     
         packet += b'\x33\x04' + self.lease_time
         if self.request_subnet_mask == 1 :
@@ -155,7 +155,7 @@ if __name__ == '__main__' :
 
 
     try:
-        dhcps.bind(('192.168.17.237', 67))    #send from port 67
+        dhcps.bind(('', 67))    #send from port 67 192.168.17.237
     except Exception as e:
         print('port 68 in use...')
         dhcps.close()

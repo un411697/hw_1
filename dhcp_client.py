@@ -88,7 +88,6 @@ class client:
         print('Got packet')
         print('Unpack...\n')
         if data[4:8] == self.TransactionID :
-            self.message_type = self.data[0]
             self.your_ip = self.data[16:20]
             self.next_server = self.data[20:24]
 
@@ -134,6 +133,7 @@ class client:
             else :
                 for i in range (0, len(self.DNS)) :
                     print (str(self.DNS[i][0]) + '.' + str(self.DNS[i][1]) + '.' + str(self.DNS[i][2]) + '.' + str(self.DNS[i][3]) + ', ')
+            return 2
         elif self.message_type == 5 :
             print ('This is a DHCPAck packet.\n')
             print ('Offer IP :' + str(self.your_ip[0]) + '.' + str(self.your_ip[1]) + '.' + str(self.your_ip[2]) + '.' + str(self.your_ip[3]))
@@ -147,12 +147,13 @@ class client:
             else :
                 for i in range (0, len(self.DNS)) :
                     print (str(self.DNS[i][0]) + '.' + str(self.DNS[i][1]) + '.' + str(self.DNS[i][2]) + '.' + str(self.DNS[i][3]) + ', ')
+            return 5
 if __name__ == '__main__':
     dhcps = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
     dhcps.setsockopt(socket.SOL_SOCKET, socket.SO_BROADCAST, 1)
 
     try:
-        dhcps.bind(('192.168.17.237', 68))    #send from port 68  
+        dhcps.bind(('', 68))    #send from port 68   192.168.17.237
     except Exception as e:
         print('port 68 in use...')
         dhcps.close()
@@ -169,9 +170,8 @@ if __name__ == '__main__':
         while True:
             data = dhcps.recv(65535)
             test.data_init(data)
-            test.unpack()
-            if test.message_type:
-                test.print_result()
+            test.unpack()   
+            if test.TransactionID == data[4:8] and test.print_result() == 2 and test.next_server == 0:
                 break
     except socket.timeout as e:
         print(e)
@@ -187,8 +187,9 @@ if __name__ == '__main__':
             data = dhcps.recv(65535)
             test.data_init(data)
             test.unpack()
-            if test.message_type:
-                test.print_result()
+            if test.TransactionID == data[4:8] and test.print_result() == 5 :
+                #if test.message_type:
+                 #   test.print_result()
                 break
     except socket.timeout as e:
         print(e)
